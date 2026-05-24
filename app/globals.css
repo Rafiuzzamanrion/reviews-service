@@ -1,26 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #0D3B66;
+  --color-accent: #1B9AAA;
+  --color-success: #06D6A0;
+  --color-warning: #FFD166;
+  --color-danger: #EF476F;
+  --color-background: #F0F4F8;
+  --color-surface: rgba(255,255,255,0.65);
+  --color-border-glass: rgba(255,255,255,0.35);
+  --color-text-secondary: #4A5568;
+  --font-sans: 'Inter', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-primary);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism Utilities */
+@layer components {
+  .glass-card {
+    background: var(--color-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--color-border-glass);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(13, 59, 102, 0.12);
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-left: 1px solid var(--color-border-glass);
+    box-shadow: -8px 0 32px rgba(13, 59, 102, 0.1);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(13, 59, 102, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 59, 102, 0.4);
+}
+
+/* Hero Background Gradient Mesh */
+.bg-mesh {
+  background-color: var(--color-background);
+  background-image: 
+    radial-gradient(at 40% 20%, rgba(27, 154, 170, 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, rgba(13, 59, 102, 0.15) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, rgba(6, 214, 160, 0.1) 0px, transparent 50%);
 }
