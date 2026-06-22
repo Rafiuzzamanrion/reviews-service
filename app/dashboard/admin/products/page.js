@@ -11,11 +11,7 @@ import { RiShoppingBag3Line, RiAddLine, RiEditLine, RiDeleteBinLine, RiCloseLine
 const initialForm = {
   title: "",
   price: 0,
-  minOrder: 1,
-  stock: 0,
-  format: "",
-  access: "",
-  policy: "",
+  termsAndConditions: "",
   badge: "",
   instantDelivery: true,
   isActive: true,
@@ -59,11 +55,7 @@ export default function AdminProductsPage() {
     setFormData({
       title: product.title,
       price: product.price,
-      minOrder: product.minOrder,
-      stock: product.stock,
-      format: product.format || "",
-      access: product.access || "",
-      policy: product.policy || "",
+      termsAndConditions: product.termsAndConditions || "",
       badge: product.badge || "",
       instantDelivery: product.instantDelivery,
       isActive: product.isActive,
@@ -165,8 +157,6 @@ export default function AdminProductsPage() {
                 <tr className="border-b border-white/30">
                   <th className="text-left px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Title</th>
                   <th className="text-left px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Price</th>
-                  <th className="text-left px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Stock</th>
-                  <th className="text-left px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Min Qty</th>
                   <th className="text-left px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Status</th>
                   <th className="text-right px-5 py-4 text-xs uppercase tracking-wider text-text-secondary font-semibold">Actions</th>
                 </tr>
@@ -179,12 +169,6 @@ export default function AdminProductsPage() {
                       {product.badge && <div className="text-xs text-accent mt-0.5">{product.badge}</div>}
                     </td>
                     <td className="px-5 py-4 font-bold text-primary">${product.price.toFixed(2)}</td>
-                    <td className="px-5 py-4">
-                      <span className={`text-sm font-semibold ${product.stock < 100 ? 'text-danger' : 'text-success'}`}>
-                        {product.stock.toLocaleString()}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-sm text-primary">{product.minOrder}</td>
                     <td className="px-5 py-4">
                       <button
                         onClick={() => handleToggleActive(product)}
@@ -267,35 +251,20 @@ export default function AdminProductsPage() {
                       <input type="number" step="0.01" min="0" required value={formData.price} onChange={e => setFormData({...formData, price: parseFloat(e.target.value)})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-primary mb-1">Stock *</label>
-                      <input type="number" min="0" required value={formData.stock} onChange={e => setFormData({...formData, stock: parseInt(e.target.value)})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
+                      <label className="block text-sm font-semibold text-primary mb-1">Badge</label>
+                      <input type="text" placeholder="e.g. Premium Aged" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-primary mb-1">Min Order Qty *</label>
-                    <input type="number" min="1" required value={formData.minOrder} onChange={e => setFormData({...formData, minOrder: parseInt(e.target.value)})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-primary mb-1">Format</label>
-                      <input type="text" placeholder="e.g. email:password" value={formData.format} onChange={e => setFormData({...formData, format: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-primary mb-1">Access</label>
-                      <input type="text" placeholder="e.g. All Access" value={formData.access} onChange={e => setFormData({...formData, access: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-primary mb-1">Policy</label>
-                    <input type="text" placeholder="e.g. Replacement Warranty" value={formData.policy} onChange={e => setFormData({...formData, policy: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-primary mb-1">Badge</label>
-                    <input type="text" placeholder="e.g. Premium Aged" value={formData.badge} onChange={e => setFormData({...formData, badge: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none" />
+                    <label className="block text-sm font-semibold text-primary mb-1">Terms & Conditions</label>
+                    <textarea
+                      rows={4}
+                      placeholder="Enter terms and conditions for this product..."
+                      value={formData.termsAndConditions}
+                      onChange={e => setFormData({...formData, termsAndConditions: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent/50 outline-none resize-vertical"
+                    />
                   </div>
 
                   <div className="flex items-center gap-6 pt-2">

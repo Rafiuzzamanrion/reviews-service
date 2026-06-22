@@ -7,9 +7,9 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
-  title: "Premiums Edu Market — Premium .edu Email Accounts",
-  description: "Buy premium, aged, and single domain .edu email accounts with instant delivery and replacement warranty.",
-  keywords: "edu email, buy edu email, premium edu accounts, student discount, edu marketplace",
+  title: "Buy BGM Review",
+  description: "Buy review - premium, aged, and single domain .edu email accounts with instant delivery and replacement warranty.",
+  keywords: "buy bgm review, buy review, bgm review, premium edu accounts, student discount, edu marketplace",
 };
 
 export default function RootLayout({ children }) {

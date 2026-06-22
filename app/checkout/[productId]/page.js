@@ -20,11 +20,9 @@ export default function CheckoutPage({ params }) {
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState("");
 
-  const [quantity, setQuantity] = useState(20);
   const [fullName, setFullName] = useState("");
   const [contact, setContact] = useState("");
-  const [deliveryType, setDeliveryType] = useState("Email");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [contactType, setContactType] = useState("WhatsApp");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [transactionId, setTransactionId] = useState("");
 
@@ -39,9 +37,6 @@ export default function CheckoutPage({ params }) {
         const settingsData = await settingsRes.json();
         setProduct(prodData);
         setSettings(settingsData);
-        if (prodData.minOrder) setQuantity(prodData.minOrder);
-        const activeMethods = settingsData.paymentMethods?.filter((m) => m.isActive);
-        if (activeMethods?.length > 0) setPaymentMethod(activeMethods[0].key);
       } catch (err) {
         toast.error("Failed to load product data");
       }
@@ -50,6 +45,14 @@ export default function CheckoutPage({ params }) {
     fetchData();
   }, [productId]);
 
+  const activeMethods = settings?.paymentMethods?.filter((m) => m.isActive) || [];
+
+  useEffect(() => {
+    if (activeMethods.length > 0 && !paymentMethod) {
+      setPaymentMethod(activeMethods[0].key);
+    }
+  }, [settings, activeMethods, paymentMethod]);
+
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text);
     setCopied(label);
@@ -57,9 +60,6 @@ export default function CheckoutPage({ params }) {
     setTimeout(() => setCopied(""), 2000);
   };
 
-  const totalPrice = product ? (quantity * product.price).toFixed(2) : "0.00";
-
-  const activeMethods = settings?.paymentMethods?.filter((m) => m.isActive) || [];
   const selectedMethod = activeMethods.find((m) => m.key === paymentMethod);
 
   const handleSubmit = async (e) => {
@@ -70,13 +70,8 @@ export default function CheckoutPage({ params }) {
       return;
     }
 
-    if (!fullName || !contact || !deliveryAddress || !paymentMethod || !transactionId) {
+    if (!fullName || !contact || !paymentMethod || !transactionId) {
       toast.error("Please fill in all fields");
-      return;
-    }
-
-    if (quantity < product.minOrder) {
-      toast.error(`Minimum order is ${product.minOrder}`);
       return;
     }
 
@@ -87,10 +82,10 @@ export default function CheckoutPage({ params }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId: product._id,
-          quantity,
+          quantity: 1,
           fullName,
           contact,
-          deliveryAddress: `${deliveryType}: ${deliveryAddress}`,
+          deliveryAddress: `${contactType}: ${contact}`,
           paymentMethod: selectedMethod?.name || paymentMethod,
           transactionId,
         }),
@@ -142,68 +137,36 @@ export default function CheckoutPage({ params }) {
         >
           {/* Left Column: Product Info & Summary */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            {/* Product Banner */}
-            <div className="glass-card p-6 sm:p-8" style={{ background: "rgba(255,255,255,0.82)" }}>
-              <div className="flex flex-col gap-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-primary">{product.title}</h1>
-                  <div className="flex flex-wrap items-center gap-2 mt-2">
-                    {product.badge && (
-                      <span className="text-xs font-bold px-2 py-1 rounded-md bg-accent/10 text-accent uppercase tracking-wider">{product.badge}</span>
-                    )}
-                    {product.instantDelivery && (
-                      <span className="text-xs font-bold px-2 py-1 rounded-md bg-success/15 text-green-700 flex items-center gap-1 uppercase tracking-wider">
-                        <RiFlashlightLine /> Instant Delivery
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-end justify-between mt-4 pt-4 border-t border-gray-100">
-                  <div>
-                    <span className="text-4xl font-extrabold text-accent">${product.price.toFixed(2)}</span>
-                    <span className="text-sm font-semibold text-text-secondary ml-1">/ piece</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-sm font-semibold text-text-secondary mt-2 bg-gray-50/50 p-3 rounded-lg border border-gray-100">
-                  <span>Minimum Order: {product.minOrder}</span>
-                  <span>Stock Available: {product.stock?.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Order Summary & Quantity */}
+            {/* Order Summary */}
             <div className="glass-card p-6 sm:p-8" style={{ background: "rgba(255,255,255,0.82)" }}>
               <h2 className="text-lg font-bold text-primary mb-4 border-b border-gray-100 pb-2">Order Summary</h2>
-              
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-primary mb-2">
-                  Quantity (pieces)
-                </label>
-                <input
-                  type="number"
-                  min={product.minOrder}
-                  max={product.stock}
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || product.minOrder)}
-                  className="w-full px-4 py-3 text-lg font-bold rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50"
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-3 border-t border-gray-100">
-                <span className="font-semibold text-text-secondary">Subtotal</span>
-                <span className="font-bold text-primary">${totalPrice}</span>
-              </div>
-              <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                <span className="font-semibold text-text-secondary">Fees</span>
-                <span className="font-bold text-success">Free</span>
-              </div>
-              <div className="flex items-center justify-between py-4 mt-2">
-                <span className="text-lg font-bold text-primary">Total to Pay</span>
-                <span className="text-2xl font-extrabold text-accent">${totalPrice}</span>
+              <div className="flex flex-col gap-4">
+                <h1 className="text-2xl font-bold text-primary">{product.title}</h1>
+                <div className="flex flex-wrap items-center gap-2">
+                  {product.badge && (
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-accent/10 text-accent uppercase tracking-wider">{product.badge}</span>
+                  )}
+                  {product.instantDelivery && (
+                    <span className="text-xs font-bold px-2 py-1 rounded-md bg-success/15 text-green-700 flex items-center gap-1 uppercase tracking-wider">
+                      <RiFlashlightLine /> Instant Delivery
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                  <span className="text-lg font-bold text-primary">Total to Pay</span>
+                  <span className="text-2xl font-extrabold text-accent">${product.price.toFixed(2)}</span>
+                </div>
               </div>
             </div>
+
+            {/* Terms & Conditions */}
+            {product.termsAndConditions && (
+              <div className="glass-card p-6 sm:p-8" style={{ background: "rgba(255,255,255,0.82)" }}>
+                <h2 className="text-lg font-bold text-primary mb-4 border-b border-gray-100 pb-2">Terms & Conditions</h2>
+                <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">{product.termsAndConditions}</p>
+              </div>
+            )}
+
           </div>
 
           {/* Right Column: Checkout Form */}
@@ -211,7 +174,7 @@ export default function CheckoutPage({ params }) {
             <div className="glass-card p-6 sm:p-8 space-y-6" style={{ background: "rgba(255,255,255,0.82)" }}>
               <h2 className="text-xl font-bold text-primary mb-4 border-b border-gray-100 pb-3">Delivery Details</h2>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="flex flex-col gap-5">
                 {/* Full Name */}
                 <div>
                   <label className="block text-sm font-semibold text-primary mb-1.5">Your Full Name *</label>
@@ -227,38 +190,25 @@ export default function CheckoutPage({ params }) {
 
                 {/* Contact */}
                 <div>
-                  <label className="block text-sm font-semibold text-primary mb-1.5">Contact (WhatsApp/Email) *</label>
-                  <input
-                    type="text"
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                    required
-                    placeholder="Your WhatsApp or Email"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50"
-                  />
-                </div>
-              </div>
-
-              {/* Delivery Address */}
-              <div>
-                <label className="block text-sm font-semibold text-primary mb-1.5">Where should we deliver the accounts? *</label>
-                <div className="flex gap-3 mb-3">
-                  <select
-                    value={deliveryType}
-                    onChange={(e) => setDeliveryType(e.target.value)}
-                    className="w-1/3 px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50 bg-white"
-                  >
-                    <option>Email</option>
-                    <option>WhatsApp</option>
-                  </select>
-                  <input
-                    type="text"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    required
-                    placeholder={deliveryType === "Email" ? "your@email.com" : "+880xxxxxxxxx"}
-                    className="w-2/3 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50"
-                  />
+                  <label className="block text-sm font-semibold text-primary mb-1.5">Contact *</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={contactType}
+                      onChange={(e) => setContactType(e.target.value)}
+                      className="w-28 px-3 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50 bg-white text-sm shrink-0"
+                    >
+                      <option>WhatsApp</option>
+                      <option>Email</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={contact}
+                      onChange={(e) => setContact(e.target.value)}
+                      required
+                      placeholder={contactType === "Email" ? "your@email.com" : "+880xxxxxxxxx"}
+                      className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -290,7 +240,7 @@ export default function CheckoutPage({ params }) {
 
                     {selectedMethod && (
                       <div className="bg-gray-50/80 rounded-xl p-5 mb-5 border border-gray-200 shadow-inner">
-                        <p className="text-sm font-semibold text-primary mb-3">Send <span className="font-extrabold text-accent">${totalPrice}</span> to one of the following details:</p>
+                        <p className="text-sm font-semibold text-primary mb-3">Send <span className="font-extrabold text-accent">${product.price.toFixed(2)}</span> to one of the following details:</p>
                         <div className="space-y-3">
                           {selectedMethod.details?.map((detail, i) => (
                             <div key={i} className="flex items-center justify-between gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
@@ -344,7 +294,7 @@ export default function CheckoutPage({ params }) {
                   style={{ background: "linear-gradient(135deg, #0D3B66, #1B9AAA)" }}
                 >
                   <RiShoppingCartLine className="text-2xl" />
-                  {submitting ? "Processing Order..." : `Confirm & Pay $${totalPrice}`}
+                  {submitting ? "Processing Order..." : `Confirm & Pay $${product.price.toFixed(2)}`}
                 </motion.button>
               </div>
             </div>
