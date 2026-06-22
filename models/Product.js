@@ -9,19 +9,7 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  minOrder: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-  stock: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  format: String,
-  access: String,
-  policy: String,
+  termsAndConditions: String,
   instantDelivery: {
     type: Boolean,
     default: true,
@@ -41,4 +29,7 @@ const ProductSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
+if (mongoose.models.Product) {
+  delete mongoose.models.Product;
+}
+export default mongoose.model('Product', ProductSchema);

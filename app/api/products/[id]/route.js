@@ -31,10 +31,13 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const data = await request.json();
 
-    const product = await Product.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    const product = await Product.findById(id);
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
+
+    product.set(data);
+    await product.save();
 
     return NextResponse.json(product);
   } catch (error) {

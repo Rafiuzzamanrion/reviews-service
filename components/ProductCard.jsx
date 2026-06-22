@@ -2,8 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
-import { RiFlashlightLine, RiShieldCheckLine, RiStackLine } from "react-icons/ri";
-import { FaTag } from "react-icons/fa";
+import { RiFlashlightLine } from "react-icons/ri";
 
 const cardVariants = {
   initial: { opacity: 0, y: 32, scale: 0.96 },
@@ -47,17 +46,10 @@ export default function ProductCard({ product, index }) {
         <span className="text-xl font-extrabold text-accent">
           ${product.price.toFixed(2)}
         </span>
-        <span className="text-sm text-text-secondary font-medium">/piece</span>
       </div>
 
       {/* Stock & Min Order chips */}
       <div className="flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full bg-warning/20 text-yellow-700">
-          <RiStackLine /> Stock: {product.stock?.toLocaleString()}
-        </span>
-        <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full bg-orange-100 text-orange-700">
-          Min: {product.minOrder} pcs
-        </span>
         {product.instantDelivery && (
           <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full bg-success/15 text-green-700">
             <RiFlashlightLine /> Instant Delivery
@@ -65,27 +57,14 @@ export default function ProductCard({ product, index }) {
         )}
       </div>
 
-      {/* Details */}
-      <div className="flex flex-col gap-2 text-sm text-text-secondary border-t border-white/40 pt-4">
-        {product.format && (
-          <div className="flex items-center gap-2">
-            <RiStackLine className="text-accent shrink-0" />
-            <span>Format: <span className="font-medium text-primary">{product.format}</span></span>
-          </div>
-        )}
-        {product.access && (
-          <div className="flex items-center gap-2">
-            <RiShieldCheckLine className="text-accent shrink-0" />
-            <span>Access: <span className="font-medium text-primary">{product.access}</span></span>
-          </div>
-        )}
-        {product.policy && (
-          <div className="flex items-center gap-2">
-            <FaTag className="text-accent shrink-0" />
-            <span>Policy: <span className="font-medium text-primary">{product.policy}</span></span>
-          </div>
-        )}
-      </div>
+      {/* Terms & Conditions */}
+      {product.termsAndConditions && (
+        <div className="text-sm text-text-secondary border-t border-white/40 pt-4">
+          <p className="truncate" title={product.termsAndConditions}>
+            {product.termsAndConditions}
+          </p>
+        </div>
+      )}
 
       {/* CTA Button */}
       <Link href={`/checkout/${product._id}`} className="mt-auto">

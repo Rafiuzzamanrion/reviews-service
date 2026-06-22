@@ -59,30 +59,18 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Product not available' }, { status: 400 });
     }
 
-    if (quantity < product.minOrder) {
-      return NextResponse.json({ error: `Minimum order is ${product.minOrder}` }, { status: 400 });
-    }
-
-    if (quantity > product.stock) {
-      return NextResponse.json({ error: `Not enough stock. Available: ${product.stock}` }, { status: 400 });
-    }
-
-    const totalPrice = quantity * product.price;
-
     const order = await Order.create({
       userId: session.user.id,
       productId: product._id,
       productSnapshot: {
         title: product.title,
         price: product.price,
-        format: product.format,
-        access: product.access,
-        policy: product.policy,
+        termsAndConditions: product.termsAndConditions,
         badge: product.badge,
         instantDelivery: product.instantDelivery,
       },
       quantity,
-      totalPrice,
+      totalPrice: product.price,
       fullName,
       contact,
       deliveryAddress,
@@ -90,9 +78,6 @@ export async function POST(request) {
       transactionId,
       status: 'Pending',
     });
-
-    // Deduct stock
-    await Product.findByIdAndUpdate(product._id, { $inc: { stock: -quantity } });
 
     return NextResponse.json(order, { status: 201 });
   } catch (error) {
