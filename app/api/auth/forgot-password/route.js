@@ -40,7 +40,7 @@ export async function POST(request) {
       user.resetToken = undefined;
       user.resetTokenExpiry = undefined;
       await user.save();
-      return NextResponse.json({ error: 'Failed to send email. Please try again later.' }, { status: 500 });
+      return NextResponse.json({ error: result.error || 'Failed to send email. Please try again later.' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -48,6 +48,6 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('Forgot password error:', error);
-    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
