@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import OrderTable from "@/components/OrderTable";
 import RefillModal from "@/components/RefillModal";
+import OrderDetailModal from "@/components/OrderDetailModal";
 import EmptyState from "@/components/EmptyState";
 import { TableRowSkeleton } from "@/components/LoadingSkeleton";
 import toast from "react-hot-toast";
@@ -13,6 +14,7 @@ export default function UserOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refillOrder, setRefillOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -48,6 +50,20 @@ export default function UserOrdersPage() {
     }
   };
 
+  const handleOrderClick = async (order) => {
+    try {
+      const res = await fetch(`/api/orders/${order._id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setSelectedOrder(data);
+      } else {
+        toast.error("Failed to load order details");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <div>
       <div className="mb-6">
@@ -77,6 +93,7 @@ export default function UserOrdersPage() {
         <OrderTable
           orders={orders}
           onRefill={(order) => setRefillOrder(order)}
+          onOrderClick={handleOrderClick}
           isAdmin={false}
         />
       )}
@@ -86,6 +103,11 @@ export default function UserOrdersPage() {
         onClose={() => setRefillOrder(null)}
         order={refillOrder}
         onSubmit={handleRefill}
+      />
+      <OrderDetailModal
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        order={selectedOrder}
       />
     </div>
   );

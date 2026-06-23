@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import OrderTable from "@/components/OrderTable";
+import OrderDetailModal from "@/components/OrderDetailModal";
 import { TableRowSkeleton } from "@/components/LoadingSkeleton";
 import EmptyState from "@/components/EmptyState";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -16,6 +17,10 @@ export default function AdminOrdersPage() {
   const [refillOrder, setRefillOrder] = useState(null);
   const [refillNote, setRefillNote] = useState("");
   const [refillStatus, setRefillStatus] = useState("Fulfilled");
+
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [completionOrder, setCompletionOrder] = useState(null);
+  const [completionLink, setCompletionLink] = useState("");
 
   const fetchOrders = async () => {
     try {
@@ -33,12 +38,23 @@ export default function AdminOrdersPage() {
     fetchOrders();
   }, [filter]);
 
-  const handleStatusUpdate = async (orderId, status) => {
+  const handleStatusUpdate = async (orderId, status, order) => {
+    if (status === "Completed") {
+      setCompletionOrder(order);
+      setCompletionLink(order.completionLink || "");
+      return;
+    }
+    await doStatusUpdate(orderId, status);
+  };
+
+  const doStatusUpdate = async (orderId, status, link) => {
     try {
+      const body = { status };
+      if (link !== undefined) body.completionLink = link;
       const res = await fetch(`/api/orders/${orderId}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
         toast.success(`Order status updated to ${status}`);
@@ -50,6 +66,26 @@ export default function AdminOrdersPage() {
     } catch (err) {
       toast.error("Something went wrong");
     }
+  };
+
+  const handleOrderClick = async (order) => {
+    try {
+      const res = await fetch(`/api/orders/${order._id}`);
+      const data = await res.json();
+      if (res.ok) {
+        setSelectedOrder(data);
+      } else {
+        toast.error("Failed to load order details");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleCompletionSubmit = async () => {
+    await doStatusUpdate(completionOrder._id, "Completed", completionLink);
+    setCompletionOrder(null);
+    setCompletionLink("");
   };
 
   const handleRefillSubmit = async () => {
@@ -105,6 +141,7 @@ export default function AdminOrdersPage() {
           orders={orders}
           isAdmin={true}
           onStatusUpdate={handleStatusUpdate}
+          onOrderClick={handleOrderClick}
           onRefill={(order) => {
             setRefillOrder(order);
             setRefillStatus("Fulfilled");
@@ -175,6 +212,49 @@ export default function AdminOrdersPage() {
           </div>
         </div>
       )}
+      {/* Completion Link Modal */}
+      {completionOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+          <div className="glass-card p-6 w-full max-w-md bg-white/95">
+            <h3 className="font-bold text-xl text-primary mb-2">Complete Order</h3>
+            <p className="text-sm text-text-secondary mb-4">
+              Order #{completionOrder._id.slice(-6).toUpperCase()} — {completionOrder.productSnapshot?.title}
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-primary mb-1">Delivery / Completion Link</label>
+                <input
+                  type="text"
+                  value={completionLink}
+                  onChange={(e) => setCompletionLink(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full p-3 rounded-xl border border-gray-200 bg-white text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => { setCompletionOrder(null); setCompletionLink(""); }}
+                  className="flex-1 py-2.5 rounded-xl font-semibold border-2 border-gray-200 text-text-secondary hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCompletionSubmit}
+                  className="flex-1 py-2.5 rounded-xl font-semibold text-white bg-primary hover:bg-primary/90 transition-colors"
+                >
+                  Complete Order
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <OrderDetailModal
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+        order={selectedOrder}
+      />
     </div>
   );
 }

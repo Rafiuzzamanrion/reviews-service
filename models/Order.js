@@ -60,6 +60,12 @@ const OrderSchema = new mongoose.Schema({
       enum: ['Pending', 'Fulfilled', 'Rejected'],
     },
   },
+  businessLink: {
+    type: String,
+  },
+  completionLink: {
+    type: String,
+  },
   projectSource: {
     type: String,
     default: 'premiums-edu',

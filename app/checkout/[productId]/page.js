@@ -25,6 +25,7 @@ export default function CheckoutPage({ params }) {
   const [contactType, setContactType] = useState("WhatsApp");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [transactionId, setTransactionId] = useState("");
+  const [businessLink, setBusinessLink] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -88,6 +89,7 @@ export default function CheckoutPage({ params }) {
           deliveryAddress: `${contactType}: ${contact}`,
           paymentMethod: selectedMethod?.name || paymentMethod,
           transactionId,
+          businessLink,
         }),
       });
 
@@ -210,6 +212,18 @@ export default function CheckoutPage({ params }) {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Business Link */}
+              <div>
+                <label className="block text-sm font-semibold text-primary mb-1.5">Business Link</label>
+                <textarea
+                  value={businessLink}
+                  onChange={(e) => setBusinessLink(e.target.value)}
+                  placeholder="https://maps.google.com/..."
+                  rows={2}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+                />
               </div>
 
               <h2 className="text-xl font-bold text-primary mt-8 mb-4 border-b border-gray-100 pb-3">Payment Information</h2>

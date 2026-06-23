@@ -43,10 +43,10 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2 group">
               <span className="text-2xl">🎓</span>
               <span className="font-bold text-lg gradient-text hidden sm:block">
-                Buy BGM Review
+                Buy GMB reviews
               </span>
               <span className="font-bold text-lg gradient-text sm:hidden">
-                BBR
+                BGR
               </span>
             </Link>
 
@@ -162,7 +162,7 @@ export default function Navbar() {
               style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(20px)" }}
             >
               <div className="flex items-center justify-between mb-8">
-                <span className="font-bold gradient-text text-lg">BBR</span>
+                <span className="font-bold gradient-text text-lg">BGR</span>
                 <button onClick={() => setMobileOpen(false)}>
                   <HiX className="text-2xl text-primary" />
                 </button>
