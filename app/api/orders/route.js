@@ -48,7 +48,7 @@ export async function POST(request) {
 
     await connectDB();
     const data = await request.json();
-    const { productId, quantity, fullName, contact, deliveryAddress, paymentMethod, transactionId } = data;
+    const { productId, quantity, fullName, contact, deliveryAddress, paymentMethod, transactionId, businessLink } = data;
 
     if (!productId || !quantity || !fullName || !contact || !deliveryAddress || !paymentMethod || !transactionId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -77,6 +77,7 @@ export async function POST(request) {
       paymentMethod,
       transactionId,
       status: 'Pending',
+      businessLink: businessLink || '',
     });
 
     return NextResponse.json(order, { status: 201 });

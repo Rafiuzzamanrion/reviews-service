@@ -113,7 +113,13 @@ function LoginForm() {
             </motion.button>
           </form>
 
-          <p className="text-center text-sm text-text-secondary mt-6">
+          <div className="text-center text-sm text-text-secondary mt-1">
+            <Link href="/forgot-password" className="font-semibold text-accent hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+
+          <p className="text-center text-sm text-text-secondary mt-4">
             Don&apos;t have an account?{" "}
             <Link href="/signup" className="font-semibold text-accent hover:underline">
               Sign Up

@@ -27,12 +27,12 @@ export default async function HomePage() {
       <section className="bg-mesh py-20 sm:py-28 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-primary leading-tight mb-6">
-            Buy <span className="gradient-text">BGM Review</span>
+            Buy <span className="gradient-text">GMB reviews</span>
             <br />
             Instant Delivery
           </h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-10">
-            Buy review - high-quality reviews with replacement warranty.
+            Buy GMB reviews - high-quality reviews with replacement warranty.
             Trusted by thousands of customers worldwide.
           </p>
 

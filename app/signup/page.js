@@ -47,7 +47,7 @@ export default function SignupPage() {
         toast.success("Account created! Please log in.");
         router.push("/login");
       } else {
-        toast.success("Welcome to Premiums Edu Market!");
+        toast.success("Welcome to Buy GMB reviews!");
         router.push("/");
         router.refresh();
       }
@@ -77,7 +77,7 @@ export default function SignupPage() {
               <RiUserAddLine className="text-3xl text-accent" />
             </div>
             <h1 className="text-2xl font-bold text-primary">Create Account</h1>
-            <p className="text-sm text-text-secondary mt-1">Join Premiums Edu Market</p>
+            <p className="text-sm text-text-secondary mt-1">Join Buy GMB reviews</p>
           </div>
 
           {error && (

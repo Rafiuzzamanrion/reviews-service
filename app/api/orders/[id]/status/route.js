@@ -13,7 +13,7 @@ export async function PUT(request, { params }) {
 
     await connectDB();
     const { id } = await params;
-    const { status } = await request.json();
+    const { status, completionLink } = await request.json();
 
     const validStatuses = ['Pending', 'Processing', 'Completed', 'Cancelled'];
     if (!validStatuses.includes(status)) {
@@ -34,6 +34,9 @@ export async function PUT(request, { params }) {
     }
 
     order.status = status;
+    if (status === 'Completed' && completionLink !== undefined) {
+      order.completionLink = completionLink;
+    }
     await order.save();
 
     return NextResponse.json(order);
