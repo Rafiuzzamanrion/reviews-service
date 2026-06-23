@@ -44,7 +44,7 @@ export default function ProductCard({ product, index }) {
       {/* Price */}
       <div className="flex items-baseline gap-1">
         <span className="text-xl font-extrabold text-accent">
-          ${product.price.toFixed(2)}
+          ৳{product.price.toFixed(2)}
         </span>
       </div>
 

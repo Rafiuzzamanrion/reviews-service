@@ -168,7 +168,7 @@ export default function AdminProductsPage() {
                       <div className="font-semibold text-primary">{product.title}</div>
                       {product.badge && <div className="text-xs text-accent mt-0.5">{product.badge}</div>}
                     </td>
-                    <td className="px-5 py-4 font-bold text-primary">${product.price.toFixed(2)}</td>
+                    <td className="px-5 py-4 font-bold text-primary">৳{product.price.toFixed(2)}</td>
                     <td className="px-5 py-4">
                       <button
                         onClick={() => handleToggleActive(product)}

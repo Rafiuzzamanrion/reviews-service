@@ -156,7 +156,7 @@ export default function CheckoutPage({ params }) {
                 </div>
                 <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
                   <span className="text-lg font-bold text-primary">Total to Pay</span>
-                  <span className="text-2xl font-extrabold text-accent">${product.price.toFixed(2)}</span>
+                  <span className="text-2xl font-extrabold text-accent">৳{product.price.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -214,14 +214,14 @@ export default function CheckoutPage({ params }) {
                 </div>
               </div>
 
-              {/* Business Link */}
+              {/* Business Link & Review Content */}
               <div>
-                <label className="block text-sm font-semibold text-primary mb-1.5">Business Link</label>
+                <label className="block text-sm font-semibold text-primary mb-1.5">Business Link & Review Content</label>
                 <textarea
                   value={businessLink}
                   onChange={(e) => setBusinessLink(e.target.value)}
-                  placeholder="https://maps.google.com/..."
-                  rows={2}
+                  placeholder="Your business URL and review details..."
+                  rows={3}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
                 />
               </div>
@@ -254,7 +254,7 @@ export default function CheckoutPage({ params }) {
 
                     {selectedMethod && (
                       <div className="bg-gray-50/80 rounded-xl p-5 mb-5 border border-gray-200 shadow-inner">
-                        <p className="text-sm font-semibold text-primary mb-3">Send <span className="font-extrabold text-accent">${product.price.toFixed(2)}</span> to one of the following details:</p>
+                        <p className="text-sm font-semibold text-primary mb-3">Send <span className="font-extrabold text-accent">৳{product.price.toFixed(2)}</span> to one of the following details:</p>
                         <div className="space-y-3">
                           {selectedMethod.details?.map((detail, i) => (
                             <div key={i} className="flex items-center justify-between gap-3 bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
@@ -308,7 +308,7 @@ export default function CheckoutPage({ params }) {
                   style={{ background: "linear-gradient(135deg, #0D3B66, #1B9AAA)" }}
                 >
                   <RiShoppingCartLine className="text-2xl" />
-                  {submitting ? "Processing Order..." : `Confirm & Pay $${product.price.toFixed(2)}`}
+                  {submitting ? "Processing Order..." : `Confirm & Pay ৳${product.price.toFixed(2)}`}
                 </motion.button>
               </div>
             </div>

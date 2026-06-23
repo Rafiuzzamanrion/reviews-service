@@ -55,7 +55,7 @@ export default function OrderTable({ orders, onRefill, isAdmin, onStatusUpdate, 
                 </td>
                 <td className="px-5 py-4 text-sm text-primary">{order.quantity}</td>
                 <td className="px-5 py-4 text-sm font-bold text-accent">
-                  ${order.totalPrice?.toFixed(2)}
+                  ৳{order.totalPrice?.toFixed(2)}
                 </td>
                   <td className="px-5 py-4">
                     {isAdmin && onStatusUpdate ? (

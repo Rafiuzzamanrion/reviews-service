@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { RiCloseLine, RiExternalLinkLine } from "react-icons/ri";
+import { RiCloseLine, RiExternalLinkLine, RiFileCopyLine, RiCheckLine } from "react-icons/ri";
+import toast from "react-hot-toast";
 
 const statusStyles = {
   Pending: "bg-warning/20 text-yellow-700",
@@ -17,7 +19,16 @@ const refillStyles = {
 };
 
 export default function OrderDetailModal({ isOpen, onClose, order }) {
+  const [copied, setCopied] = useState("");
+
   if (!order) return null;
+
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard.writeText(text);
+    setCopied(label);
+    toast.success(`${label} copied!`);
+    setTimeout(() => setCopied(""), 2000);
+  };
 
   return (
     <AnimatePresence>
@@ -68,7 +79,7 @@ export default function OrderDetailModal({ isOpen, onClose, order }) {
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Price</span>
-                    <p className="text-sm font-bold text-accent mt-0.5">${order.productSnapshot?.price?.toFixed(2) || "—"}</p>
+                    <p className="text-sm font-bold text-accent mt-0.5">৳{order.productSnapshot?.price?.toFixed(2) || "—"}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Quantity</span>
@@ -76,7 +87,7 @@ export default function OrderDetailModal({ isOpen, onClose, order }) {
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Total</span>
-                    <p className="text-sm font-bold text-accent mt-0.5">${order.totalPrice?.toFixed(2)}</p>
+                    <p className="text-sm font-bold text-accent mt-0.5">৳{order.totalPrice?.toFixed(2)}</p>
                   </div>
                   <div>
                     <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Date</span>
@@ -125,8 +136,19 @@ export default function OrderDetailModal({ isOpen, onClose, order }) {
                   <>
                     <hr className="border-white/30" />
                     <div>
-                      <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Business Link</span>
-                      <p className="text-sm text-primary mt-0.5 break-all">{order.businessLink}</p>
+                      <span className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Business Link & Review Content</span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-sm text-primary break-all flex-1">{order.businessLink}</p>
+                        <button
+                          onClick={() => copyToClipboard(order.businessLink, "Business Link")}
+                          className={`shrink-0 flex items-center justify-center w-8 h-8 rounded-lg transition-all ${
+                            copied === "Business Link" ? "bg-success text-white" : "bg-accent/10 text-accent hover:bg-accent/20"
+                          }`}
+                          title="Copy business link"
+                        >
+                          {copied === "Business Link" ? <RiCheckLine className="text-base" /> : <RiFileCopyLine className="text-base" />}
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}
