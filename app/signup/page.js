@@ -7,13 +7,14 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import AnimatedPage from "@/components/AnimatedPage";
 import toast from "react-hot-toast";
-import { RiMailLine, RiLockLine, RiUserLine, RiUserAddLine, RiArrowLeftLine } from "react-icons/ri";
+import { RiMailLine, RiLockLine, RiUserLine, RiUserAddLine, RiArrowLeftLine, RiEyeLine, RiEyeOffLine } from "react-icons/ri";
 
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -126,14 +127,21 @@ export default function SignupPage() {
               <div className="relative">
                 <RiLockLine className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/40 bg-white/50 text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 transition"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-white/40 bg-white/50 text-primary focus:outline-none focus:ring-2 focus:ring-accent/50 transition"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary transition-colors"
+                >
+                  {showPassword ? <RiEyeOffLine className="text-lg" /> : <RiEyeLine className="text-lg" />}
+                </button>
               </div>
               <p className="text-xs text-text-secondary mt-1.5">Minimum 6 characters</p>
             </div>
